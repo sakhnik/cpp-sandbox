@@ -70,11 +70,13 @@ TEST_CASE("read")
     CHECK(BitStream::Read<0,1>(data) == 0x1);
     CHECK(BitStream::Read<1,11>(data) == 0x9a);
     CHECK(BitStream::Read<12,12>(data) == 0xbcd);
+    CHECK(BitStream::Read<24,3>(data) == 0x7);
+    CHECK(BitStream::Read<27,5>(data) == 0xf);
 }
 
 TEST_CASE("write")
 {
-    uint8_t data[4] = {};
+    uint8_t data[5] = {};
 
     BitStream::Write<0,1>(data, 0x1);
     CHECK(data[0] == 0x80);
@@ -93,4 +95,18 @@ TEST_CASE("write")
     CHECK(data[1] == 0xab);
     CHECK(data[2] == 0xcd);
     CHECK(data[3] == 0x00);
+
+    BitStream::Write<24,3>(data, 0x7);
+    CHECK(data[0] == 0x89);
+    CHECK(data[1] == 0xab);
+    CHECK(data[2] == 0xcd);
+    CHECK(data[3] == 0xe0);
+    CHECK(data[4] == 0x00);
+
+    BitStream::Write<27,5>(data, 0xf);
+    CHECK(data[0] == 0x89);
+    CHECK(data[1] == 0xab);
+    CHECK(data[2] == 0xcd);
+    CHECK(data[3] == 0xef);
+    CHECK(data[4] == 0x00);
 }
