@@ -2,6 +2,7 @@
 #include <cstdint>
 
 namespace BitStream {
+
 template <unsigned offset, unsigned count>
 inline uint32_t Read(const uint8_t *src, uint32_t accum = 0)
 {
@@ -55,28 +56,28 @@ TEST_CASE("read")
 {
     const uint8_t data[] = {0x89, 0xab, 0xcd, 0xef};
 
-    CHECK(BitStream::Read<0,1>(data) == 1);
-    CHECK(BitStream::Read<1,11>(data) == 154);
-    CHECK(BitStream::Read<12,12>(data) == 3021);
+    CHECK(BitStream::Read<0,1>(data) == 0x1);
+    CHECK(BitStream::Read<1,11>(data) == 0x9a);
+    CHECK(BitStream::Read<12,12>(data) == 0xbcd);
 }
 
 TEST_CASE("write")
 {
     uint8_t data[4] = {};
 
-    BitStream::Write<0,1>(data, 1);
+    BitStream::Write<0,1>(data, 0x1);
     CHECK(data[0] == 0x80);
     CHECK(data[1] == 0x00);
     CHECK(data[2] == 0x00);
     CHECK(data[3] == 0x00);
 
-    BitStream::Write<1,11>(data, 154);
+    BitStream::Write<1,11>(data, 0x9a);
     CHECK(data[0] == 0x89);
     CHECK(data[1] == 0xa0);
     CHECK(data[2] == 0x00);
     CHECK(data[3] == 0x00);
 
-    BitStream::Write<12,12>(data, 3021);
+    BitStream::Write<12,12>(data, 0xbcd);
     CHECK(data[0] == 0x89);
     CHECK(data[1] == 0xab);
     CHECK(data[2] == 0xcd);
