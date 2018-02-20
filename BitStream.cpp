@@ -3,35 +3,46 @@
 
 namespace BitStream {
 
+// Read 'count' number of bits from a memory starting at bit 'offset'
+// The compiler will easily optimizize the implementation.
 template <unsigned offset, unsigned count>
 inline uint32_t Read(const uint8_t *src, uint32_t accum = 0)
 {
+    // Base of recursion
     if (count == 0)
         return accum;
 
+    // Look at the source, how many bits there left in the current byte
     const uint8_t *cur_src = src + offset / 8;
     constexpr unsigned bits_left = 8 - offset % 8;
     const uint8_t cur_data = *cur_src << (8 - bits_left);
 
+    // How many bits we need and can write now
     constexpr unsigned bits_to_use = bits_left < count ? bits_left : count;
 
+    // Write the desired bits to the accumulator
     accum <<= bits_to_use;
     uint8_t mask = (1 << bits_to_use) - 1;
     constexpr unsigned off = 8 - bits_to_use;
     accum |= (cur_data & (mask << off)) >> off;
 
+    // Tail-recurse into the rest of required bits
     return Read<offset + bits_to_use, count - bits_to_use>(src, accum);
 }
 
+// Write given value to the memory starting at 'offset' bit spanning 'count' bits
 template <unsigned offset, unsigned count>
 inline void Write(uint8_t *dst, uint32_t value)
 {
+    // Recursion base
     if (count == 0)
         return;
 
+    // How many bits there left in the current target byte
     uint8_t *cur_dst = dst + offset / 8;
     constexpr unsigned bits_left = 8 - offset % 8;
 
+    // How many bits are necessary and the mask for that count of bits
     constexpr unsigned bits_to_use = bits_left < count ? bits_left : count;
     const uint8_t mask = (1 << bits_to_use) - 1;
 
