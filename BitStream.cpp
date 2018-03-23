@@ -4,7 +4,7 @@
 namespace BitStream {
 
 // Read 'count' number of bits from a memory starting at bit 'offset'
-// The compiler will easily optimizize the implementation.
+// The compiler will easily optimize the implementation.
 template <unsigned offset, unsigned count>
 inline uint32_t Read(const uint8_t *src, uint32_t accum = 0)
 {
